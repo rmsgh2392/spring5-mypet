@@ -27,8 +27,6 @@
         <spring-test-version>5.2.0.RELEASE</spring-test-version>
         <jsoup-version>1.12.1</jsoup-version>
         <mariadb-version>2.4.4</mariadb-version>
-        
-
     </properties>
     <contributors>
         <contributor>
