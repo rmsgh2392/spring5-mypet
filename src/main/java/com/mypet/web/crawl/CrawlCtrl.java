@@ -38,13 +38,19 @@ public class CrawlCtrl {
 //		box.clear();
 //		box.add(crawler.engCrawling());
 //		System.out.println("크롤링 사이즈 :"+box.size());
+		
 		return crawler.engCrawling();
 	}
+	
 /*	@GetMapping("/naver")
 	public ArrayList<HashMap<String,String> naverCrawl(){
 	 자바에서 컨트롤러에서 리턴타입이 리스트다 --> 자바스크립트는 $.each국룰 !!!
 		return crawler.engCrawling("https://endic.naver.com/?sLn=kr");
 	}
 	크롤링 프록시에서 값을 준것을 담지 않고 바로 던지려면 이렇게 한다.*/
-	
+	@GetMapping("/melon")
+	public ArrayList<HashMap<String,String>> melonCrawl(){
+		System.out.println("멜론 크롤링 들어옴");
+		return crawler.melonCrawling();
+	}
 }

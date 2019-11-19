@@ -31,7 +31,7 @@ app = (()=>{
 		let arr =[{txt: '벅스뮤직차트',name : 'bugs_crawl'},
 				  {txt: 'cgv영화차트',name : 'cgv_crawl'},
 				  {txt: 'naver오늘의단어' ,name:'naver_crwal'},
-				  {txt: '구글애견음식점',name:'google_crawl'}]
+				  {txt: '멜론차트',name:'melon_crawl'}]
 		$.each(arr,(i,j)=>{
 			$('<div/>')
 			.text(j.txt)
@@ -56,8 +56,8 @@ app = (()=>{
 				case 'naver오늘의단어':
 					naver_crwal()
 					break;
-				case '구글애견음식점':
-					google_crawl()
+				case '멜론차트':
+					melon_crawl()
 					break;
 			}
 	})
@@ -73,7 +73,6 @@ app = (()=>{
 			$.each(d,(i,j)=>{
 			$('<tr/>',{
 					id : 'id_'+i+'',
-					
 				}).html('<img src="'+j.photo+'">'+j.title)
 				.css({width:'40%',height:'40%',border: '1px solid orange'}).appendTo('#right')
 				$('<td/>',{
@@ -81,6 +80,9 @@ app = (()=>{
 				}).css({width:'70%'}).appendTo('tr#id_'+i+'')
 			})
 		})
+	}
+	let recent_updates =x=>{
+		
 	}
 	let cgv_crawl=()=>{
 		alert('cgv차트 ㄱㄱ')
@@ -104,7 +106,6 @@ app = (()=>{
 		$.getJSON(_+'/crawls/naver',d=>{
 			//d에 전달된 값 list면 each룹에  j값으로 바로 전달 가능
 			//but map이면 d.키값 이렇게 매칭시켜 써준다
-			alert('d.size :'+d.length)
 			$.each(d,(i,j)=>{
 //				$('<tr/>',{//<tr/> -- > <td></td>의 약어  고스트면 무조건 어팬트 투 해서 내가 붙히고 싶은 화면에 붙힌다.
 //					id : 'id_'+i+'',
@@ -124,6 +125,17 @@ app = (()=>{
 		})
 	})
 		
+	}
+	let melon_crawl =()=>{
+		alert('멜론차트 ㄱㄱ')
+		$('#right').empty()
+		$.getJSON(_+'/crawls/melon',d=>{
+			$.each(d,(i,j)=>{
+				$('<tr><td>'+j.ranking+'<img src="'+j.photo+'"></td><td>'+j.content+'</td><td>'+j.allbum+'</td></tr>')
+				.css({border:'2px solid lavender'})
+				.appendTo('#right')
+			})
+		})
 	}
 	return {run}
 })()

@@ -85,8 +85,7 @@ public class CrawlingProxy extends Proxy{
 public ArrayList<HashMap<String, String>> cgvCrawl(){
 		//title,content,img
 		final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36";
-		String url = "http://www.cgv.co.kr/movies/"
-				+ "" ;
+		String url = "http://www.cgv.co.kr/movies/";
 	try{
 		Connection.Response homePage = Jsoup.connect(url) 
 				.method(Connection.Method.GET) 
@@ -124,5 +123,43 @@ public ArrayList<HashMap<String, String>> cgvCrawl(){
 			box.get().forEach(System.out :: println);
 			return box.get();
 		}
-	}	
+	public ArrayList<HashMap<String, String>> melonCrawling(){
+		String url = "https://www.melon.com/chart/rise/index.htm?dayTime=2019111918#params%5Bidx%5D=1";
+		final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36";
+		try {
+			Connection.Response melon = Jsoup.connect(url)
+					.method(Connection.Method.GET)
+					.userAgent(USER_AGENT)
+					.execute();
+			Document temp = melon.parse();
+			Elements element = temp.select("div[class=service_list_song type02 d_song_list]");
+			Elements rankings = element.select("div[class=wrap t_center] span.rank");
+			Elements photos = element.select("div.wrap a.image_typeAll");
+			Elements songs = element.select("div[class=ellipsis rank01] a");
+			Elements artists = element.select("div[class=ellipsis rank02] a");
+			Elements allbums = element.select("div[class=ellipsis rank03] a");
+			HashMap<String, String> map = null;
+			System.out.println("랭킹 사이즈 :"+rankings.size());
+			System.out.println("사진 사이즈 :"+photos.size());
+			System.out.println("곡 사이즈 :"+songs.size());
+			System.out.println("아티스트 사이즈 :"+artists.size());
+			System.out.println("앨범 사이즈 : "+allbums.size());
+			for(int i=0;i<songs.size();i++) {
+				map = new HashMap<>();
+				map.put("ranking",rankings.get(i+1).text());
+				map.put("photo", photos.get(i).select("img").attr("src"));
+				map.put("content", songs.get(i).text()+"\n"+artists.get(i*2).text());
+				map.put("allbum", allbums.get(i).text());
+				box.add(map);
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("*******************멜론 뮤직 크롤링한 값**************** ");
+		box.get().forEach(System.out :: println);
+		return box.get();
+	}
+}	
 
