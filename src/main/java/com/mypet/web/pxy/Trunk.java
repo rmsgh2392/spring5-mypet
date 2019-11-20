@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 public class Trunk<T>{
 	//이녀석의 용도는 값을 담고 뺴는 역활 !
 	private HashMap<String, T> map;
+
+//	public void put(String s, T t) {map.put(s, t);}
 	public void put (List<String> x,List<T> y) {
 		map = new HashMap<>();
 		for(int i=0; i<x.size();i++) {

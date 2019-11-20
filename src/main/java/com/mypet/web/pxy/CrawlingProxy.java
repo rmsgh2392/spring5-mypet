@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.jsoup.Connection;
@@ -55,9 +56,10 @@ public class CrawlingProxy extends Proxy{
 		//이제 메서드를 참조해서 객체로 만들어 i를 주지 않아도 이 시스템아웃이 나(리스트)를 휘저으면서 값들을 찍게된다.
 		return box.get();
 	}
-	public Box<HashMap<String, String>> bugsCrawl(){
+	public ArrayList<HashMap<String,String>> bugsCrawl(){
 		String url = "https://music.bugs.co.kr/chart/track/realtime/total?chartdate=20191119&charthour=13";
 		final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36";
+		box.clear();
 		try {
 			Connection.Response homePage = Jsoup.connect(url)
 					.method(Connection.Method.GET)
@@ -68,19 +70,21 @@ public class CrawlingProxy extends Proxy{
 			Elements titles = temp.select("p.title");
 			Elements artists = temp.select("p.artist");
 			HashMap<String , String> map = null;
+			
 			for(int i=0; i<titles.size();i++) {
 				map = new HashMap<>();
+				map.put("bugsseq",toString(i+1));
 				map.put("photo", photos.get(i).select("img").attr("src"));
 				map.put("title", titles.get(i).text());
 				map.put("artist", artists.get(i).text());
 				box.add(map);
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		System.out.println("=========벅스 크롤링한 값==============");
 		box.get().forEach(System.out :: println);
-		return box;
+		return box.get();
 	}
 public ArrayList<HashMap<String, String>> cgvCrawl(){
 		//title,content,img

@@ -30,8 +30,8 @@ app = (()=>{
 		$('<td/>',{id: 'right'}).css({width:'80%',height:'100%',border:'1px solid black','vertical-align':'top'}).appendTo('tr')
 		let arr =[{txt: '벅스뮤직차트',name : 'bugs_crawl'},
 				  {txt: 'cgv영화차트',name : 'cgv_crawl'},
-				  {txt: 'naver오늘의단어' ,name:'naver_crwal'},
-				  {txt: '멜론차트',name:'melon_crawl'}]
+				  {txt: 'naver오늘의단어',name: 'naver_crwal'},
+				  {txt: '멜론차트',name: 'melon_crawl'}]
 		$.each(arr,(i,j)=>{
 			$('<div/>')
 			.text(j.txt)
@@ -48,7 +48,7 @@ app = (()=>{
 				$(this).siblings().css({'background-color':'white'})
 				switch($(this).text()){
 				case '벅스뮤직차트':
-					bugs_crawl({img : $.img()})
+					bugs_crawl({page : 0})
 					break;
 				case 'cgv영화차트':
 					cgv_crawl()
@@ -66,19 +66,70 @@ app = (()=>{
 		
 		
 	}
-	let bugs_crawl =()=>{
+	let bugs_crawl =x=>{
 		alert('벅스 크롤링 ㄱㄱ')
 		$('#right').empty()
-		$.getJSON(_+'/crawls/bugs',d=>{
-			$.each(d,(i,j)=>{
+		$.getJSON(_+'/crawls/bugs/'+x.page,d=>{
+			let page = d.pagination
+			let data = d.list
+			alert('page :'+page.startPage + page.endPage)
+/*			$('<table id="content"><tr id="header"></tr></table>')
+			.css({}).appendTo('#right')
+			$.each(['사진','가수','제목'],(i,j)=>{
+				$('<th/>').html('<b>'+j+'</b>').css({width :'99%',height : '50px',border: '1px solid black'}).appendTo('#header')
+			})
+			$.each(data,(i,j)=>{
+				$('<tr><td>'+j.bugsseq+'</td><img src="'+j.photo+'"/><td>'+j.photo+'</td><td>'+j.artist+'</td><td>'+j.title+'</td></tr>')
+				.css({width : '25%',height:'100%',border:'1px solid black'})
+				.appendTo('#content tbody')
+			})
+			$('#content tr td').css({border : '1px solid tomato'})
+			$.each([],(i,j)=>{
+				$('<div/>').css({width : '80px',height : '80px'})
+				.appendTo('#right')
+			})*/
+			$('<table id="content"><thead><tbody></tbody></thead></table>').css({width : '100%',border : '1px solid lavender','border-collapse' : 'collapse'}).appendTo('#right')
+			$.each(['순위','제목','artist'],(i,j)=>{
+				$('<th/>').text(j).css({width : '25%',height:'50px'}).appendTo('#content thead')
+			})
+			$.each(data,(i,j)=>{
+				$('<tr><td>'+j.bugsseq+'</td><td><img src="'+j.photo+'"></td><td>'+j.artist+'</td><td>'+j.title+'</td></tr>')
+				.css({'background-color': 'lavender',
+			    	  'vertical-align': 'top',
+			    	  border : '1px solid lightblue'
+						})
+				.appendTo('#content tbody')
+			})
+			if(page.existPrev){
+				$('<div><a href="#">가지마</a></div>').appendTo('#paging')
+			}
+			let i = 0
+			for(i=page.startPage;i<=page.endPage;i++){
+				if(page.currPage == i){
+				$('<div id="paging" style="float : left;"><span class="sp" style="font-size : 50px; border : groove;">'+(i+1)+'</span></div>')
+					.appendTo('#right')
+				}else{
+					$('<div id="paging" style="float : left;"><span class="sp" style="font-size : 50px; border : groove;">'+(i+1)+'</span></div>')
+					.appendTo('#right')
+					.click(function(){
+						alert('페이지 번호  : '+$(this).children('.sp').text())
+						bugs_crawl({page : $(this).children('.sp').text()})
+					})
+				}
+				
+			}
+/*			if(page.existNext){
+				$('<div><a href="#">넘어가</a></div>').appendTo('#paging')
+			}*/
+/*			$.each(data,(i,j)=>{
 			$('<tr/>',{
 					id : 'id_'+i+'',
-				}).html('<img src="'+j.photo+'">'+j.title)
-				.css({width:'40%',height:'40%',border: '1px solid orange'}).appendTo('#right')
+				}).html('<td>'+j.bugsseq+'</td><img src="'+j.photo+'">'+j.title)
+				.css({width:'10%',height:'40%',border: '1px solid orange'}).appendTo('#content tbody')
 				$('<td/>',{
 					text : j.artist
 				}).css({width:'70%'}).appendTo('tr#id_'+i+'')
-			})
+			})*/
 		})
 	}
 	let recent_updates =x=>{

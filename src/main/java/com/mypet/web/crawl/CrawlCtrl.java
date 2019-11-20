@@ -1,7 +1,9 @@
 package com.mypet.web.crawl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,34 +13,54 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mypet.web.pxy.Box;
 import com.mypet.web.pxy.CrawlingProxy;
+import com.mypet.web.pxy.PageProxy;
+import com.mypet.web.pxy.Proxy;
+import com.mypet.web.pxy.Trunk;
 
 @RestController
 @RequestMapping("/crawls")
 public class CrawlCtrl {
 	@Autowired CrawlingProxy crawler;
 	@Autowired Box<Object> box;
+	@Autowired PageProxy pager;
+	@Autowired Trunk<Object> trunk;
 	
-	@GetMapping("/bugs")
-	public ArrayList<Object> bugsCrawl(){
+	
+	@GetMapping("/bugs/{page}")
+	public Map<?,?> bugsCrawl(@PathVariable String page){
 		System.out.println("벅스 크롤링 들어옴");
-		box.clear();
-		box.add(crawler.bugsCrawl());
-		return box.get();
+//		box<HashMap<String,String>>  = null;
+		ArrayList<HashMap<String, String>> list = crawler.bugsCrawl();
+		pager.setRowCount(list.size());
+		pager.setPageSize(5);
+		pager.setBlockSize(5);
+		pager.setCurrPage(pager.parseInt(page));
+		pager.printer("현재 페이지 : "+page);
+		pager.paging();
+		ArrayList<HashMap<String, String>> temp =new ArrayList<>();
+		for(int i=0;i<list.size();i++) {
+			if(i >= pager.getStartRow() && i <= pager.getEndRow()){
+				temp.add(list.get(i));
+			}
+			if(i > pager.getEndRow()) {break;}
+		}
+		trunk.put(Arrays.asList("pagination","list"),Arrays.asList(pager, temp));
+		System.out.println("js에 보내는 값 :"+trunk.get());
+		return trunk.get();
 	}
 	@GetMapping("/cgvs")
 	public ArrayList<HashMap<String,String>> cgvsCrawl(){
 		System.out.println("cgv컨트롤러 들어옴");
-		box.clear();
 //		box.add(crawler.cgvCrawl());
+		box.clear();
 		return crawler.cgvCrawl();
 	}
 	@GetMapping("/naver")
 	public ArrayList<HashMap<String,String>> naverCrawl(){
 		System.out.println("naver 크롤링 들어옴");
-//		box.clear();
+		box.clear();
 //		box.add(crawler.engCrawling());
 //		System.out.println("크롤링 사이즈 :"+box.size());
-		
 		return crawler.engCrawling();
 	}
 	
@@ -51,6 +73,7 @@ public class CrawlCtrl {
 	@GetMapping("/melon")
 	public ArrayList<HashMap<String,String>> melonCrawl(){
 		System.out.println("멜론 크롤링 들어옴");
+		box.clear();
 		return crawler.melonCrawling();
 	}
 }
