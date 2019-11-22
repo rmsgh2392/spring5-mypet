@@ -32,7 +32,7 @@ public class PageProxy extends Proxy{
 		nextBlock  = startPage + blockSize;
 		prevBlock  = startPage - blockSize;
 		existPrev = currBlock !=0;
-		existNext = currBlock != (blockCount-1);
+		existNext = (currBlock+1) != blockCount;
 
 	}
 }

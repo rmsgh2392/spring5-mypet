@@ -1,23 +1,29 @@
 "use strict"
 var app = app || {}
 app = (()=>{
-	let _,js,css,img
+	let _,js,css,img,pop_js
 	let init=()=>{
 		_ = $.ctx()
 		js = $.js()
 		css = $.css()
 		img = $.img()
+		pop_js = js+'/pop.js'
 		alert('ctx:'+_)
 	}
 	let run =x=>{
-		$.getScript(x+'/resources/js/cmm/router.js',()=>{
-			$.extend(new Session(x))
+		$.when(
+			$.getScript(x+'/resources/js/cmm/router.js',()=>{$.extend(new Session(x))}),
+			$.getScript(pop_js)
+		)
+		.done(()=>{
 			onCreate()
 		})
+		.fail(()=>{alert('getScript 실패 ')})
 	}
 	let onCreate =()=>{
 		init()
-		alert('박근호')
+		$(pop.view({img : $.img()})).appendTo('body')
+		pop.open()
 		setContentView()
 	}
 	let setContentView =()=>{
@@ -48,7 +54,7 @@ app = (()=>{
 				$(this).siblings().css({'background-color':'white'})
 				switch($(this).text()){
 				case '벅스뮤직차트':
-					bugs_crawl({page : 0})
+					bugs_crawl(0)
 					break;
 				case 'cgv영화차트':
 					cgv_crawl()
@@ -69,7 +75,7 @@ app = (()=>{
 	let bugs_crawl =x=>{
 		alert('벅스 크롤링 ㄱㄱ')
 		$('#right').empty()
-		$.getJSON(_+'/crawls/bugs/'+x.page,d=>{
+		$.getJSON(_+'/crawls/bugs/page/'+x+'',d=>{
 			let page = d.pagination
 			let data = d.list
 			alert('page :'+page.startPage + page.endPage)
@@ -100,11 +106,43 @@ app = (()=>{
 						})
 				.appendTo('#content tbody')
 			})
+			$('<div/>',{id : 'pagination'})
+			.css({width : '50%',
+				  height : '50px',
+				  margin: '50px auto'
+				  })
+			.appendTo('#right')
 			if(page.existPrev){
-				$('<div><a href="#">가지마</a></div>').appendTo('#paging')
+				$('<span/>')
+				.css({display : 'inline-block',width : '70px',height : '50px',border: '3px solid lavender' ,'background-image':'url('+img+'/mini.jpg)','text-align': 'center','padding-top': '5%','background-size': 'cover','font-size': 'xx-large'})
+				.text('잘가')
+				.prependTo('#pagination')
+				.click(()=>{
+					bugs_crawl(page.prevBlock)
+				})
 			}
-			let i = 0
-			for(i=page.startPage;i<=page.endPage;i++){
+			let i = page.startPage
+			for(;i<=page.endPage;i++){
+				$('<span/>')
+				.css({display : 'inline-block',width : '70px',height : '50px',border: '3px solid hotpink' ,'background-image':'url('+img+'/mini.jpg)','text-align': 'center','padding-top': '5%','background-size': 'cover','font-size': 'xx-large'})
+				.text(i+1)
+				.appendTo('#pagination')
+				.click(function(){
+					let p = parseInt($(this).text())
+					alert('현재 클릭한 페이지 번호 :'+(p - 1))
+					bugs_crawl(p-1)
+				})
+			}
+			if(page.existNext){
+				$('<span/>')
+				.css({display : 'inline-block',width : '70px',height : '50px',border: '3px solid lavender' ,'background-image':'url('+img+'/mini.jpg)','text-align': 'center','padding-top': '5%','background-size': 'cover','font-size': 'xx-large'})
+				.text('꺼져')
+				.appendTo('#pagination')
+				.click(()=>{
+					bugs_crawl(page.nextBlock)
+				})
+			}
+			/*for(i=page.startPage;i<=page.endPage;i++){
 				if(page.currPage == i){
 				$('<div id="paging" style="float : left;"><span class="sp" style="font-size : 50px; border : groove;">'+(i+1)+'</span></div>')
 					.appendTo('#right')
@@ -117,23 +155,8 @@ app = (()=>{
 					})
 				}
 				
-			}
-/*			if(page.existNext){
-				$('<div><a href="#">넘어가</a></div>').appendTo('#paging')
 			}*/
-/*			$.each(data,(i,j)=>{
-			$('<tr/>',{
-					id : 'id_'+i+'',
-				}).html('<td>'+j.bugsseq+'</td><img src="'+j.photo+'">'+j.title)
-				.css({width:'10%',height:'40%',border: '1px solid orange'}).appendTo('#content tbody')
-				$('<td/>',{
-					text : j.artist
-				}).css({width:'70%'}).appendTo('tr#id_'+i+'')
-			})*/
 		})
-	}
-	let recent_updates =x=>{
-		
 	}
 	let cgv_crawl=()=>{
 		alert('cgv차트 ㄱㄱ')
@@ -142,7 +165,6 @@ app = (()=>{
 			$.each(d,(i,j)=>{
 				$('<td/>').css({
 					'background-color': 'black',
-//					display : 'inline-flex',
 			    	color: 'navajowhite',
 					width : '30%',
 				   'text-align' : 'center',
@@ -158,17 +180,9 @@ app = (()=>{
 			//d에 전달된 값 list면 each룹에  j값으로 바로 전달 가능
 			//but map이면 d.키값 이렇게 매칭시켜 써준다
 			$.each(d,(i,j)=>{
-//				$('<tr/>',{//<tr/> -- > <td></td>의 약어  고스트면 무조건 어팬트 투 해서 내가 붙히고 싶은 화면에 붙힌다.
-//					id : 'id_'+i+'',
-//					text : j.origin
-//				}).appendTo('#right')
-	/*			$('<td/>',{
-					text : j.trans
-				}).css({'background-color': 'black',
-			    color: 'wheat'}).appendTo('tr#id_'+i+'')*/
-				
+//				<td></td>의 약어  고스트면 무조건 어팬트 투 해서 내가 붙히고 싶은 화면에 붙힌다.				
+//				글자만 text만 주고 싶을땐 .text() 하면 되고 내가 여기다 <h1>태그를 주고 싶다 --> .html()
 			    $('<td/>')
-					//글자만 text만 주고 싶을땐 .text() 하면 되고 내가 여기다 <h1>태그를 주고 싶다 --> .html()
 				.css({width:'40%',
 					height:'40%',
 					border:'2px solid tomato',
@@ -188,5 +202,14 @@ app = (()=>{
 			})
 		})
 	}
-	return {run}
+	return {run, bugs_crawl}
 })()
+/*			$.each(data,(i,j)=>{
+			$('<tr/>',{
+					id : 'id_'+i+'',
+				}).html('<td>'+j.bugsseq+'</td><img src="'+j.photo+'">'+j.title)
+				.css({width:'10%',height:'40%',border: '1px solid orange'}).appendTo('#content tbody')
+				$('<td/>',{
+					text : j.artist
+				}).css({width:'70%'}).appendTo('tr#id_'+i+'')
+			})*/

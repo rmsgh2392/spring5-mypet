@@ -14,6 +14,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @MapperScan(basePackages= {"com.mypet.web"})
 @ComponentScan(basePackages= {"com.mypet.web"})
+//@Import({ServletConfig.class, MyBatisConfig.class}) 에러먹으면 이렇게 임포트 시켜준다
 public class RootConfig {
 	@Bean
 	public DataSource dataSource() {

@@ -26,9 +26,11 @@ public class CrawlCtrl {
 	@Autowired Trunk<Object> trunk;
 	
 	
-	@GetMapping("/bugs/{page}")
+	@GetMapping("/bugs/page/{page}")
 	public Map<?,?> bugsCrawl(@PathVariable String page){
-		System.out.println("벅스 크롤링 들어옴");
+		box.clear();
+		pager.printer("벅스 크롤링 들어옴");
+		pager.printer("넘어온 페이지 번호 :"+page);
 //		box<HashMap<String,String>>  = null;
 		ArrayList<HashMap<String, String>> list = crawler.bugsCrawl();
 		pager.setRowCount(list.size());

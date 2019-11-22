@@ -5,6 +5,6 @@
        <setting  name="mapUnderscoreToCamelCase"  value="true"/>
     </settings>
     <typeAliases>
-   
+   		<typeAlias alias="User" type="com.mypet.web.usr.User"/>
     </typeAliases>
 </configuration>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="com.mypet.web.usr.UserMapper">
+    <select id="rowCount" resultType="int">
+       SELECT COUNT(*) FROM USER
+    </select>
+    
+    <select id="selectUserById" resultType="User">
+       SELECT * FROM USER
+			WHERE UID LIKE #{uid}
+    </select>
+    
+    <insert id="insertUser" parameterType="User">
+        INSERT INTO USER (UID,PWD,SSN,UNAME,PHONE,ADDRESS,EMAIL,PETTYPE)values(
+            #{uid}, #{pwd},#{ssn},#{uname},#{phone},#{address},#{email},#{petType})
+    </insert>
+    <select id="existId"  resultType="int">
+    	SELECT COUNT(*)  FROM USER WHERE UID LIKE #{uid}
+    </select>
+    <select  id="countUsers" resultType="int">
+    	SELECT COUNT(*)  FROM USER 
+    </select>
+    
+    <select  id="selectAll" resultType="User">
+    	SELECT * 
+    	FROM USER
+    	WHERE UID LIKE '0%'
+    </select>
+    <select  id="selectUname" resultType="User">
+    	SELECT * 
+    	FROM USER
+    	WHERE UNAME LIKE '장%'
+    </select>
+    
+	</mapper>
